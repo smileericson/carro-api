@@ -1,6 +1,7 @@
 package br.com.senac.carros_api.controllers;
 
 
+import br.com.senac.carros_api.dtos.CarroFiltroDTO;
 import br.com.senac.carros_api.dtos.CarroRequestDTO;
 import br.com.senac.carros_api.entidades.Carro;
 import br.com.senac.carros_api.services.CarrosService;
@@ -22,8 +23,8 @@ public class CarroController {
     this.carrosService = carrosService;
     }
     @GetMapping("/listar")
-    public ResponseEntity<List<Carro>> listar(){
-        List<Carro> clienteList = carrosService.listar();
+    public ResponseEntity<List<Carro>> listar(CarroFiltroDTO filtro){
+        List<Carro> clienteList = carrosService.listar(filtro);
 
         if (clienteList.isEmpty()){
             return ResponseEntity.status(204).body(null);
@@ -54,6 +55,16 @@ public class CarroController {
         try {
             carrosService.deletar(id);
             return ResponseEntity.ok().body(null);
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(null);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(null);
+        }
+    }
+    @GetMapping("/listar/{id}")
+    public ResponseEntity<Carro> listarById(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok(carrosService.listarById(id));
         }catch (RuntimeException e){
             return ResponseEntity.badRequest().body(null);
         }catch (Exception e){

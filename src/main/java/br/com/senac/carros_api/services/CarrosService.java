@@ -1,6 +1,7 @@
 package br.com.senac.carros_api.services;
 
 
+import br.com.senac.carros_api.dtos.CarroFiltroDTO;
 import br.com.senac.carros_api.dtos.CarroRequestDTO;
 import br.com.senac.carros_api.entidades.Carro;
 import br.com.senac.carros_api.repositorios.CarroRepository;
@@ -17,7 +18,10 @@ public class CarrosService {
 
         this.carroRepository =carroRepository;
     }
-    public List<Carro>listar(){
+    public List<Carro>listar(CarroFiltroDTO filtro){
+        if(filtro.getModelo() != null){
+            return carroRepository.findByModelo(filtro.getModelo());
+        }
 
         return carroRepository.findAll();
     }
@@ -38,6 +42,12 @@ public class CarrosService {
             carroRepository.deleteById(id);
         }
         throw new RuntimeException("Carro deletado com sucesso");
+    }
+    public Carro listarById(Long id){
+        if(carroRepository.existsById(id)){
+            return  carroRepository.findById(id).get();
+        }
+        throw new RuntimeException("Carro não existe");
     }
 
     private Carro carroRequestDTOParaCarro(
